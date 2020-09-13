@@ -24,3 +24,7 @@ pnpm-debug.log*
 
 # API key
 src/api.json
+
+# Bootstrap
+src/assets/bootstrap.min.css
+
