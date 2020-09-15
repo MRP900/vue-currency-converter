@@ -2,19 +2,19 @@
     <div>
         <form @submit="convert">
             <fieldset>
-                <legend>Dollars to ...</legend>
+                <legend>Money to Money</legend>
                 <div id="fields">
-                    <input type="text" v-model="money" name="money" placeholder="Amount to Convert"><br>
+                    <input type="text" v-model="money" placeholder="Amount to Convert"><br>
                         <div id="selectors">
                             <select id="dropDown1" v-model="convertFrom">
-                                <option value="Convert From" selected>Convert From</option>
+                                <option value="Convert From" convertFrom>Convert From</option>
                                 <option v-for="rate in rates" v-bind:key="rate.id">
                                     {{ rate.abb }}
                                 </option> 
                             </select>
                             
-                            <select id="dropDown2" v-model="selected">
-                                <option value="Convert to" selected>Convert to</option>
+                            <select id="dropDown2" v-model="convertTo">
+                                <option value="Convert to" convertTo>Convert to</option>
                                 <option v-for="rate in rates" v-bind:key="rate.id">
                                     {{ rate.abb }}
                                 </option> 
@@ -42,24 +42,28 @@ export default {
         return {
             money : "",
             convertFrom: "Convert From",
-            selected : "Convert to"
+            convertTo : "Convert to"
         }
     },
     methods: {
         convert(e) {
             e.preventDefault();
-            if (!isNaN(this.money) && (this.money.length > 0) && (this.selected != "Convert to")) {
-                // const money = this.money;
-                // const rate = this.selected;
-                console.log("Hello, from convert");
-                console.log(this.selected);
-                console.log(this.money);
-                this.$emit('new-convert', this.money, this.selected);
+            if (!isNaN(this.money) && (this.money.length > 0) && (this.convertTo != "Convert to") && (this.convertFrom != "Convert From")) {
+                console.log("Money: " + this.money);
+                console.log("From: " + this.convertFrom);
+                console.log("To: " + this.convertTo);
+                this.$emit('new-convert', this.money, this.convertFrom, this.convertTo);
             }
         },
         clearOut() {
             this.money = "";
+            this.convertTo = "Convert to";
+            this.convertFrom = "Convert From";
             this.$emit('clear-out');
+            // console.log("Reset stuff:");
+            // console.log("CT: " + this.convertTo);
+            // console.log("CF: " + this.convertFrom);
+            // console.log("M: " + this.money);
         }
     } 
 }

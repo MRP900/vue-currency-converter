@@ -9,26 +9,41 @@
 			<h3>Dollars to {{ rate }} {{ converted }}</h3>
 		</div> -->
 		<h3>{{ converted }}</h3>
+		<table id="results">
+				<tr>
+					<th>
+						Amount Converted
+					</th>
+					<th>
+						Rate
+					</th>
+					<th>
+						Currency Converted to
+					</th>
+				</tr>		
+		</table>
 	</div>
 </template>
 
 <script>
 import axios from 'axios';
 import Convert from '../components/Convert';
-
-
+import * as data from '../api.json';
+const apiKey = data.default.key;
 export default {
 	name: 'Home',
 	components: {
 		Convert
 	},
 	methods: {
-		convertUSD(money, rate) {		
-			this.converted = money / this.apiResult.rates.USD;
-			this.rate = rate;
+		convertUSD(money, rateFrom, rateTo) {		
+			this.converted = money / this.apiResult.rates[rateFrom];
+			this.rate = rateFrom;
 			if (this.rate != 'EUR') {
-				this.converted *= this.apiResult.rates[this.rate];
+				this.converted *= this.apiResult.rates[rateTo];
+				
 			}
+			this.converted = this.converted.toFixed(2);
 			// // this.rate = rate;
 			// if (rate != 'EUR') {
 			// 	this.converted = this.converted / this.apiResult.rates[rate];
@@ -51,14 +66,18 @@ export default {
 			},
 			// euros: "",
 			rate: "",
+			rateFrom: "",
 			converted : "",
 			abb : [],
 			rates : [],
 			cleanData : []
 		}
 	},
+	// Get API Data
 	created() {
-		axios.get('http://data.fixer.io/api/latest?access_key=893d6c36e2e81633bee78cd279acba84').then(res => {
+		// console.log(data);
+		// console.log(data.default.key);
+		axios.get('http://data.fixer.io/api/latest?access_key='+apiKey).then(res => {
 		// console.log(res.data);
 		// console.log(this.apiResult.rates.USD);
 		// this.usdRate = this.apiResult.rates.USD;
@@ -72,7 +91,7 @@ export default {
 			obj = {
 				id: i,
 				abb: this.abb[i],
-				rate: this.rates[i]
+				// rate: this.rates[i]
 			}
 			this.cleanData.push(obj);
 		}
@@ -90,5 +109,15 @@ export default {
 </script>
 
 <style scoped>
-  
+
+#results {
+	margin: 1em auto;
+	
+}
+th td {
+	padding: .5em;
+}
+table th td {
+	border: 1px solid black;
+}
 </style>
