@@ -8,19 +8,20 @@
 			<h3>{{ apiResult.rates.USD }} : 1</h3>
 			<h3>Dollars to {{ rate }} {{ converted }}</h3>
 		</div> -->
-		<h3>{{ converted }}</h3>
-		<table id="results">
+		<!-- <h3>{{ converted }}</h3> -->
+		<table id="results" v-if="conversions.length > 0">
+			<thead>
 				<tr>
-					<th>
-						Amount Converted
-					</th>
-					<th>
-						Rate
-					</th>
-					<th>
-						Currency Converted to
-					</th>
-				</tr>		
+					<th>Amount / Converted From</th>
+					<th>Amount / Converted to</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="conversion in conversions" v-bind:key="conversion.id">
+					<td> {{ conversion.start }} / {{ conversion.from }} </td>
+					<td> {{ conversion.end }} / {{ conversion.to }} </td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </template>
@@ -44,15 +45,28 @@ export default {
 				
 			}
 			this.converted = this.converted.toFixed(2);
+			let obj = {}
+			obj = {
+				id: this.conversions.length,
+				start: money,
+				end: this.converted,
+				from: rateFrom,
+				to: rateTo
+			}
+			
+			this.conversions.push(obj);
+			console.log(this.conversions);
 			// // this.rate = rate;
 			// if (rate != 'EUR') {
 			// 	this.converted = this.converted / this.apiResult.rates[rate];
 			// }
-			console.log(this.apiResult.rates.EUR);
+			
 			console.log(this.converted);
 		},
 		clearOut() {
 			this.converted = "";
+			this.conversions = [];
+			this.conversionId = 0;
 		}
 		
 	},
@@ -70,22 +84,19 @@ export default {
 			converted : "",
 			abb : [],
 			rates : [],
-			cleanData : []
+			cleanData : [],
+			conversions: [],
+			// conversionId: 0
 		}
 	},
 	// Get API Data
 	created() {
-		// console.log(data);
-		// console.log(data.default.key);
 		axios.get('http://data.fixer.io/api/latest?access_key='+apiKey).then(res => {
-		// console.log(res.data);
-		// console.log(this.apiResult.rates.USD);
-		// this.usdRate = this.apiResult.rates.USD;
+		
 		this.apiResult = res.data;
 		this.abb = Object.keys(this.apiResult.rates);
 		this.rates = Object.values(this.apiResult.rates);
-		// // this.usdRate = this.apiResult.rates.USD;
-		// this.keys = this.apiResult.rates;
+		
 		for (let i = 0; i < this.abb.length; i++) {
 			let obj = {}
 			obj = {
@@ -95,11 +106,6 @@ export default {
 			}
 			this.cleanData.push(obj);
 		}
-		// console.log(this.cleanData);
-		// console.log(this.abb);
-		// console.log(this.rates);
-		// console.log(keys);
-		// console.log(currencyRates);
 	});
       
   },
@@ -112,12 +118,13 @@ export default {
 
 #results {
 	margin: 1em auto;
+	width: 60%;
 	
 }
-th td {
+th, td {
 	padding: .5em;
 }
-table th td {
+table {
 	border: 1px solid black;
 }
 </style>

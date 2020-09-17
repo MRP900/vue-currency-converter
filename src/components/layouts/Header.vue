@@ -20,6 +20,7 @@ export default {
     color: #fff;
     text-align: center;
     padding: 5px;
+    height: 8.5em;
   }
   a {
     color: #fff;
